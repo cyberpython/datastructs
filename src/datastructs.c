@@ -1,9 +1,16 @@
 #include <stdlib.h>
+#include <stdint.h>
 #include <datastructs.h>
 
+typedef struct ds_linked_list_node ds_linked_list_node;
+
+typedef struct ds_doubly_linked_list_node ds_doubly_linked_list_node;
+
 typedef struct ds_linked_list_node {
+
     void* data;
     ds_linked_list_node * next;
+    
 } ds_linked_list_node ;
 
 typedef struct ds_doubly_linked_list_node {
@@ -11,8 +18,22 @@ typedef struct ds_doubly_linked_list_node {
     void* data;
     ds_doubly_linked_list_node * previous;
     ds_doubly_linked_list_node * next;
-
+    
 } ds_doubly_linked_list_node ;
+
+typedef struct ds_linked_list {
+
+    ds_linked_list_node* head;
+    int size;
+    
+} ds_linked_list;
+
+typedef struct ds_doubly_linked_list {
+
+    ds_doubly_linked_list_node* head;
+    int size;
+    
+} ds_doubly_linked_list;
 
 ds_linked_list* ds_linked_list_create(){
 
@@ -20,6 +41,12 @@ ds_linked_list* ds_linked_list_create(){
     result->head = NULL;
     result->size = 0;
     return result;
+
+}
+
+int ds_linked_list_length(ds_linked_list* list){
+
+    return list->size;
 
 }
 
@@ -170,6 +197,12 @@ ds_doubly_linked_list* ds_doubly_linked_list_create(){
 
 }
 
+int ds_doubly_linked_list_length(ds_doubly_linked_list* list){
+
+    return list->size;
+
+}
+
 void ds_doubly_linked_list_delete(ds_doubly_linked_list** list_ptr){
 
     ds_doubly_linked_list_clear(*list_ptr);
@@ -225,7 +258,9 @@ void ds_doubly_linked_list_insert_at(ds_doubly_linked_list* list, void* data, in
     if((n == NULL) || (index <= 0)){ // insert at list head
         list->head = new_node;
         new_node->next = n;
-        n->previous = new_node;
+        if(n != NULL){
+            n->previous = new_node;
+        }
         list->size ++;
     } else if((index > 0) && (index < list->size)){ // insert at specified index
         while((cur_index<index-1) && (n!=NULL)){

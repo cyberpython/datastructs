@@ -16,44 +16,13 @@
  * etc...
  */
 
-/**
- * Node structure for linked lists. 
- *
- * Users do not need to worry about this struct since it only used internally
- * by the library.
- */
-typedef struct ds_linked_list_node ds_linked_list_node;
+/** Structure for linked lists. */
+typedef struct ds_linked_list ds_linked_list;
 
-/**
- * Node structure for doubly linked lists. 
- *
- * Users do not need to worry about this struct since it only used internally
- * by the library.
- */
-typedef struct ds_doubly_linked_list_node ds_doubly_linked_list_node;
+/** Structure for doubly linked lists. */
+typedef struct ds_doubly_linked_list ds_doubly_linked_list;
 
-/**
- * Structure for linked lists. 
- *
- */
-typedef struct {
 
-    /** Pointer to the list's first node. */
-    ds_linked_list_node* head;
-    
-    /** Integer variable containing the size (number of nodes) of the list. */
-    int size;
-    
-} ds_linked_list;
-
-typedef struct {
-    
-    /** Pointer to the list's first node. */
-    ds_doubly_linked_list_node* head;
-    
-    /** Integer variable containing the size (number of nodes) of the list. */
-    int size;
-} ds_doubly_linked_list;
 
 /**
  * Creates a linked list and returns a pointer to the newly allocated structure.
@@ -70,6 +39,15 @@ typedef struct {
  * @return A pointer to the newly created list.
  */
 ds_linked_list* ds_linked_list_create();
+
+/**
+ * Returns the length of the given list.
+ *
+ * @param list The list.
+ *
+ * @return The number of items in the given list. 
+ */
+int ds_linked_list_length(ds_linked_list* list);
 
 /**
  * Deallocates the memory used by a linked list and all its internal nodes.
@@ -155,6 +133,16 @@ void* ds_linked_list_remove(ds_linked_list* list, int index);
 ds_doubly_linked_list* ds_doubly_linked_list_create();
 
 /**
+ * Returns the length of the given list.
+ *
+ * @param list The list.
+ *
+ * @return The number of items in the given list. 
+ */
+int ds_doubly_linked_list_length(ds_doubly_linked_list* list);
+
+
+/**
  * Deallocates the memory used by a linked list and all its internal nodes.
  *
  * **IMPORTANT:** The memory for node data is not deallocated - it is up to the 
@@ -221,11 +209,8 @@ void* ds_doubly_linked_list_get(ds_doubly_linked_list* list, int index);
  */
 void* ds_doubly_linked_list_remove(ds_doubly_linked_list* list, int index);
 
-// TODO: array_list
 
-// TODO: array_hash_map
 
-// TODO: linked_hash_map
 
 #endif
 
