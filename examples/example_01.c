@@ -24,7 +24,7 @@ int main(){
     ds_linked_list_add(list, &d);
     
     int i;
-    for (i = 0; i < list->size; i ++){
+    for (i = 0; i < ds_linked_list_length(list); i ++){
         data = ds_linked_list_get(list, i);
         printf("Name: %s, Email: %s\n", data->name, data->email );
     }
