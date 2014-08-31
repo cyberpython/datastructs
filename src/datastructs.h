@@ -15,6 +15,9 @@
  *
  * etc...
  */
+ 
+/** The default capacity (bucket count) for linked hashtables. */
+#define DS_LINKED_HASHTABLE_DEFAULT_CAPACITY_C 10000
 
 /** Structure for linked lists. */
 typedef struct ds_linked_list ds_linked_list;
@@ -22,7 +25,21 @@ typedef struct ds_linked_list ds_linked_list;
 /** Structure for doubly linked lists. */
 typedef struct ds_doubly_linked_list ds_doubly_linked_list;
 
+/** Structure for linked hashtables. */
+typedef struct ds_linked_hashtable ds_linked_hashtable;
 
+/** 
+ * Structure for linked hashtable keys.
+ *
+ * The {@link ds_linked_hashtable_keys} function returns the keys of a linked hashtable 
+ * a {@link ds_linked_list} with each item being of this struct type.
+ */
+typedef struct ds_linked_hashtable_key {
+
+    void* key;
+    size_t key_length;
+    
+} ds_linked_hashtable_key;
 
 /**
  * Creates a linked list and returns a pointer to the newly allocated structure.
@@ -209,8 +226,87 @@ void* ds_doubly_linked_list_get(ds_doubly_linked_list* list, int index);
  */
 void* ds_doubly_linked_list_remove(ds_doubly_linked_list* list, int index);
 
+/**
+ * Creates a hashtable that uses linked lists to resolve hashing conflicts.
+ *
+ * The hashtable has the capacity defined by {@link DS_LINKED_HASHTABLE_DEFAULT_CAPACITY_C}
+ * and uses the default hashing function.
+ *
+ * The default hashing function treats input as a byte array and 
+ * returns the modulo of the sum of the array's (signed) byte values and the 
+ * hashtable's capacity.
+ *
+ * The newly allocated hashtable should be deallocated using the {@link ds_linked_hashtable_delete} 
+ * function.
+ *
+ * @return A pointer to the new hashtable.
+ */
+ds_linked_hashtable* ds_linked_hashtable_create();
 
+/**
+ * Creates a hashtable that uses linked lists to resolve hashing conflicts.
+ *
+ * The hashtable has the given capacity and uses the default hashing function.
+ *
+ * The default hashing function treats input as a byte array and 
+ * returns the modulo of the sum of the array's (signed) byte values and the 
+ * hashtable's capacity.
+ *
+ * The newly allocated hashtable should be deallocated using the {@link ds_linked_hashtable_delete} 
+ * function.
+ *
+ * @param capacity The number of buckets in the hashtable.
+ *
+ * @return A pointer to the new hashtable.
+ */
+ds_linked_hashtable* ds_linked_hashtable_create_with_capacity(int capacity);
 
+/**
+ * Creates a hashtable that uses linked lists to resolve hashing conflicts.
+ *
+ * The hashtable has the capacity defined by {@link DS_LINKED_HASHTABLE_DEFAULT_CAPACITY_C}
+ * and uses the given hashing function.
+ *
+ * The newly allocated hashtable should be deallocated using the {@link ds_linked_hashtable_delete} 
+ * function.
+ *
+ * @param hash_func The hashing function to be used to compute the correct bucket index for each key.
+ *
+ * @return A pointer to the new hashtable.
+ */
+ds_linked_hashtable* ds_linked_hashtable_create_with_hash_func(int (*hash_func)(ds_linked_hashtable* hashtable, void* key, size_t key_length));
+
+/**
+ * Creates a hashtable that uses linked lists to resolve hashing conflicts.
+ *
+ * The hashtable has the given capacity and uses the given hashing function.
+ *
+ * The newly allocated hashtable should be deallocated using the {@link ds_linked_hashtable_delete} 
+ * function.
+ *
+ * @param hash_func The hashing function to be used to compute the correct bucket index for each key.
+ * @param capacity The number of buckets in the hashtable.
+ *
+ * @return A pointer to the new hashtable.
+ */
+ds_linked_hashtable* ds_linked_hashtable_create_with_hash_func_and_capacity(int (*hash_func)(ds_linked_hashtable* hashtable, void* key, size_t key_length), int capacity);
+
+void ds_linked_hashtable_delete(ds_linked_hashtable** hashtable_ptr);
+
+void ds_linked_hashtable_clear(ds_linked_hashtable* hashtable);
+
+// WARNING: when a value is overwritten, if there are no other pointers to the 
+// previous value then it will not be possible to reclaim the memory allocated 
+// for that value (if it was dynamically allocated) anymore.
+void ds_linked_hashtable_put(ds_linked_hashtable* hashtable, void* key, size_t key_length, void* value);
+
+void* ds_linked_hashtable_get(ds_linked_hashtable* hashtable, void* key, size_t key_length);
+
+void* ds_linked_hashtable_remove(ds_linked_hashtable* hashtable, void* key, size_t key_length);
+
+ds_linked_list* ds_linked_hashtable_keys(ds_linked_hashtable* hashtable);
+
+void ds_linked_hashtable_keys_delete(ds_linked_list** keys_list_ptr);
 
 #endif
 

@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include <check.h>
 #include <datastructs.h>
 
@@ -465,6 +466,54 @@ START_TEST (test_doubly_linked_list_create_add_get_remove_clear_delete)
 }
 END_TEST
 
+START_TEST (test_linked_hashtable_create_delete)
+{
+    ds_linked_hashtable* hashtable = ds_linked_hashtable_create();
+    ck_assert_ptr_ne(hashtable, NULL);
+    ds_linked_hashtable_delete(&hashtable);
+    ck_assert_ptr_eq(hashtable, NULL);
+}
+END_TEST
+
+START_TEST (test_linked_hashtable_default_hash_func)
+{
+    ds_linked_hashtable* hashtable = ds_linked_hashtable_create();
+    
+    int hash = 0;
+    
+    hash = ds_default_hash_func(hashtable, "key", strlen("key"));
+    ck_assert_int_eq(hash, ('k' + 'e' + 'y') % DS_LINKED_HASHTABLE_DEFAULT_CAPACITY_C);
+    
+    // TODO: more tests
+    
+    ds_linked_hashtable_delete(&hashtable);
+}
+END_TEST
+
+
+START_TEST (test_linked_hashtable_put_get)
+{
+    ds_linked_hashtable* hashtable = ds_linked_hashtable_create(); 
+    
+    char* v = "Hello world!";
+    
+    ds_linked_hashtable_put(hashtable, "test", strlen("test"), v);
+    
+    ds_linked_hashtable_put(hashtable, "etst", strlen("etst"), "Bye, bye!");
+    
+    ds_linked_hashtable_put(hashtable, "etst", strlen("etst"), "Good morning!");
+    
+    char* r = ds_linked_hashtable_get(hashtable, "test", strlen("test"));
+    
+    ck_assert_str_eq(r, v);
+    
+    r = ds_linked_hashtable_get(hashtable, "etst", strlen("etst"));
+    
+    ck_assert_str_eq(r, "Good morning!");
+        
+    ds_linked_hashtable_delete(&hashtable);
+}
+END_TEST
 
 Suite * linked_list_suite () {
 
@@ -487,9 +536,16 @@ Suite * linked_list_suite () {
     tcase_add_test (tc_doubly_linked_list, test_doubly_linked_list_add_multiple_get_index);
     tcase_add_test (tc_doubly_linked_list, test_doubly_linked_list_insert_at);
     tcase_add_test (tc_doubly_linked_list, test_doubly_linked_list_create_add_get_remove_clear_delete);
+    
+    TCase *tc_linked_hashtable = tcase_create ("hashtable");
+    
+    tcase_add_test (tc_linked_hashtable, test_linked_hashtable_create_delete);
+    tcase_add_test (tc_linked_hashtable, test_linked_hashtable_default_hash_func);
+    tcase_add_test (tc_linked_hashtable, test_linked_hashtable_put_get);
 
     suite_add_tcase (s, tc_linked_list);
     suite_add_tcase (s, tc_doubly_linked_list);
+    suite_add_tcase (s, tc_linked_hashtable);
 
     return s;
   
