@@ -7,13 +7,45 @@
  *
  * \section intro_sec Introduction
  *
- * This is the introduction.
+ * Datastructs is a C library that provides a simple implementation of:
  *
- * \section install_sec Download
+ * * a linked list
+ * * a doubly linked list
+ * * a hash table that uses linked lists to store data internally
  *
- * \subsection step1 Step 1: Opening the box
+ * \section quickstart_sec Quickstart
+ * 
+ *     #include <stdio.h>
+ *     #include <datastructs.h>
+ *     
+ *     int main(){
+ *     
+ *     
+ *         ds_linked_list* list = ds_linked_list_create();
+ *         
+ *         ds_linked_list_add(list, "John Doe");
+ *         ds_linked_list_add(list, "Jane Plain");
+ *         ds_linked_list_insert_at(list, "Jack Smith", 1);
+ *         ds_linked_list_add(list, "Mary Merry");
+ *         
+ *         int i;
+ *         for (i = 0; i < ds_linked_list_length(list); i ++){
+ *             printf("Name: %s\n", (char *) ds_linked_list_get(list, i) );
+ *         }
+ *         
+ *         ds_linked_list_delete(&list);
+ *     
+ *     }
+ *     
+ * \section unittests_sec Unit Tests
+ * To build and run the unit tests you need [check](http://check.sourceforge.net/).
+ * Then execute:
  *
- * etc...
+ *     cd test
+ *     ./build_tests.sh
+ *     ./check_datastructs
+ *     
+ *    
  */
  
 /** The default capacity (bucket count) for linked hashtables. */
@@ -291,22 +323,85 @@ ds_linked_hashtable* ds_linked_hashtable_create_with_hash_func(int (*hash_func)(
  */
 ds_linked_hashtable* ds_linked_hashtable_create_with_hash_func_and_capacity(int (*hash_func)(ds_linked_hashtable* hashtable, void* key, size_t key_length), int capacity);
 
+/**
+ * Deallocates the memory used by the hashtable.
+ *
+ * **IMPORTANT:** The memory for the actual data is not deallocated - it is up to the 
+ *              caller to manage the memory for the actual hashtable data.
+ *
+ * @param hashtable_ptr A pointer to the hashtable.
+ */
 void ds_linked_hashtable_delete(ds_linked_hashtable** hashtable_ptr);
 
+/**
+ * Deallocates the memory used by the hashtable's buckets.
+ *
+ * **IMPORTANT:** The memory for the actual data is not deallocated - it is up to the 
+ *              caller to manage the memory for the actual hashtable data.
+ *
+ * @param hashtable A pointer to the hashtable.
+ */
 void ds_linked_hashtable_clear(ds_linked_hashtable* hashtable);
 
-// WARNING: when a value is overwritten, if there are no other pointers to the 
-// previous value then it will not be possible to reclaim the memory allocated 
-// for that value (if it was dynamically allocated) anymore.
+/**
+ * Puts a key-value pair into the hashtable.
+ *
+ * If a value is already mapped to the given key, it is overwritten.
+ * NOTE: When a value gets overwritten, if there are no other pointers to the 
+ * it then it will not be possible to reclaim the memory allocated for it 
+ * (if it was dynamically allocated).
+ *
+ * @param hashtable A pointer to the hashtable.
+ * @param key A pointer to the key.
+ * @param key_length The key's length.
+ * @param value A pointer to value to be inserted to the hashtable.
+ */
 void ds_linked_hashtable_put(ds_linked_hashtable* hashtable, void* key, size_t key_length, void* value);
 
+/**
+ * Returns the hashtable value for the given key.
+ *
+ * @param hashtable A pointer to the hashtable.
+ * @param key A pointer to the key.
+ * @param key_length The key's length.
+ *
+ * @return The hashtable value for the given key.
+ *         If the key is NULL or does not exist in the hashtable then NULL is returned.
+ */
 void* ds_linked_hashtable_get(ds_linked_hashtable* hashtable, void* key, size_t key_length);
 
+/**
+ * Removes the key-value pair from the hashtable for the given key.
+ *
+ * @param hashtable A pointer to the hashtable.
+ * @param key A pointer to the key.
+ * @param key_length The key's length.
+ *
+ * @return The hashtable value for the given key.
+ *         If the key is NULL or does not exist in the hashtable then NULL is returned.
+ */
 void* ds_linked_hashtable_remove(ds_linked_hashtable* hashtable, void* key, size_t key_length);
 
+/**
+ * Returns the hashtable keys as a linked list.
+ *
+ * A new linked list is constructed with each call.
+ * The list should be deleted using the {@link ds_linked_hashtable_keys_delete}
+ * function.
+ *
+ * @param hashtable A pointer to the hashtable.
+ *
+ * @return A pointer to the newly created list of hashtable keys.
+ */
 ds_linked_list* ds_linked_hashtable_keys(ds_linked_hashtable* hashtable);
 
+/**
+ * Deletes the given linked list of hashtable keys.
+ *
+ * @param keys_list_ptr A pointer to the list of keys.
+ */
 void ds_linked_hashtable_keys_delete(ds_linked_list** keys_list_ptr);
+
 
 #endif
 
